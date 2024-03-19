@@ -37,7 +37,7 @@ public class AlunoService {
     Aluno alunoUpdated = alunoFromDb.get();
 
     alunoUpdated.setName(aluno.getName());
-    alunoUpdated.setEmail(aluno.getName());
+    alunoUpdated.setEmail(aluno.getEmail());
 
     alunoRepository.save(alunoUpdated);
   }
