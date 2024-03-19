@@ -31,7 +31,7 @@ public class AlunoService {
     public void update(Long id, Aluno aluno) {
         Optional<Aluno> alunoFromDb = findById(id);
     if (alunoFromDb.isEmpty()) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado no banco de dados");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado no banco de dados!");
     }
 
     Aluno alunoUpdated = alunoFromDb.get();
