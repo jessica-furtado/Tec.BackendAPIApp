@@ -6,4 +6,3 @@ public enum MatriculaAlunoStatusEnum {
     TRANCADO,
     MATRICULADO;
 }
-//Atualização
