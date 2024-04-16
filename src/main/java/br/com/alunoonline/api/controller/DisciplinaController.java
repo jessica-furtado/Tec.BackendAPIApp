@@ -43,4 +43,16 @@ public class DisciplinaController {
         disciplinaService.deleteById(id);
     }
 
+    @GetMapping("/professor/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Disciplina> findByProfessorId(@PathVariable Long id) {
+        return disciplinaService.findByProfessorId(id);
+    }
+
+   // @PatchMapping("/{id}")
+   // @ResponseStatus(HttpStatus.NO_CONTENT)
+   // public void update(@RequestBody Disciplina disciplina, @PathVariable Long id) {
+       // disciplinaService.update(id, disciplina);
+    //}
+
 }
