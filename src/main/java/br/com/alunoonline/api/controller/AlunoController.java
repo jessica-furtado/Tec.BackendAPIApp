@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/aluno")
+@RestController  //Anotação de informação para arquitetura
+@RequestMapping("/aluno")  //Mapeamento do endereço
 public class AlunoController {
 
     @Autowired
     AlunoService alunoService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping  //Anotação para informar da criação do objeto verbos HTTP
+    @ResponseStatus(HttpStatus.CREATED) //Anotação da resposta da requisição
     public void create(@RequestBody Aluno aluno) {
         alunoService.create(aluno);
-    }
+    }  //Conversão do Jason em um objeto já modelado em Java
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public List<Aluno> findAll() {
@@ -32,7 +32,7 @@ public class AlunoController {
     @ResponseStatus(HttpStatus.OK)
     public Optional<Aluno> findById(@PathVariable Long id) {
         return alunoService.findById(id);
-    }
+    } //PathVariable anotação que converte o HTTP em Java
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody Aluno aluno, @PathVariable Long id) {

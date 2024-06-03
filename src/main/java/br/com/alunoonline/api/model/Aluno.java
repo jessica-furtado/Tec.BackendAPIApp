@@ -11,15 +11,17 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@Entity
+@AllArgsConstructor //Métodos construtores com argumentos
+@NoArgsConstructor // Métodos construtores sem necessidade de argumentos
+@Data //Gets and Sets
+@Entity //Anotação para informar ao banco de dados que essa classe corresponde a uma entidade, tabela
 
 public class Aluno implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //Serializable - Serialização de dados
+
+    @Id //Anotação informando que esse atributo é o ID da tabela Aluno
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //Geração de valores com estratégia do tipo identity
     private Long id;
     private String name;
     private String email;

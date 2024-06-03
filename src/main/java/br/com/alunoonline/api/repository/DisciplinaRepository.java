@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface DisciplinaRepository extends JpaRepository<Disciplina, Long> {
-    List<Disciplina> findByProfessorId(Long professorId);
+    List<Disciplina> findByProfessorId(Long professorId);  //Assinatura do método que busca a lista de disciplinas pela chave estrangeira professor ID
 }

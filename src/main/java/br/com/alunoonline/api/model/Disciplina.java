@@ -21,7 +21,7 @@ public class Disciplina implements Serializable {
     private Long Id;
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "professor_id")
-    private Professor professor;
+    @ManyToOne  //Anotação informando muitos para um (Muitas disciplinas para um professor)
+    @JoinColumn(name = "professor_id") //Anotação para criação de chave estrangeira
+    private Professor professor;  //Atributo Professor é do tipo professor
 }

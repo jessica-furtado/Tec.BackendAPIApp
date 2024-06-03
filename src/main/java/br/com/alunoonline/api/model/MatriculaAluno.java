@@ -29,7 +29,7 @@ public class MatriculaAluno implements Serializable {
     @JoinColumn(name = "disciplina_id")
     private Disciplina disciplina;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)  //Anotação que informa que o campo status será uma enumeração
     private MatriculaAlunoStatusEnum status;
 
 }
