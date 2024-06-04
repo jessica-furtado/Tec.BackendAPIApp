@@ -1,34 +1,31 @@
 package br.com.alunoonline.api.model;
 
-import br.com.alunoonline.api.enums.FinanceiroStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-
-public class FinanceiroAluno implements Serializable {
-
+public class Fatura implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @OneToOne
-    @JoinColumn(name="student_id")
-    private Aluno student;
+    @ManyToOne
+    @JoinColumn(name = "student_financial_id")
+    private FinanceiroAluno StudentFinancial;
 
-    private Double discount;
+    private LocalDateTime dueDate;
 
-    private Integer dueDate;
+    private LocalDateTime paidOn;
 
-    @Enumerated(EnumType.STRING)
-    private FinanceiroStatusEnum status;
+    private LocalDateTime createdAt;
 
 
 

@@ -1,9 +1,11 @@
 package br.com.alunoonline.api.service;
 
 import br.com.alunoonline.api.dtos.CriarAlunoRequest;
+import br.com.alunoonline.api.enums.FinanceiroStatusEnum;
 import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import br.com.alunoonline.api.model.Aluno;
 import br.com.alunoonline.api.model.Curso;
+import br.com.alunoonline.api.model.FinanceiroAluno;
 import br.com.alunoonline.api.repository.AlunoRepository;
 import br.com.alunoonline.api.repository.CursoRepository;
 import br.com.alunoonline.api.repository.FinanceiroAlunoRepository;
@@ -40,11 +42,9 @@ public class AlunoService {
                        curso
                )
        );
-    }  //prirmeiro método de criação
 
-    //Criar o item financeiro desse aluno salvo
-
-
+        createFinanceiroInformation (savedStudent, criarAlunoRequest);
+    }  //Criar o item financeiro desse aluno salvo
 
     public List <Aluno> findAll() {
         return alunoRepository.findAll();
@@ -69,6 +69,18 @@ public class AlunoService {
   }
   public void deleteById(Long id) {
         alunoRepository.deleteById(id);
+  }
+
+  public void createFinanceiroInformation(Aluno aluno, CriarAlunoRequest criarAlunoRequest) {
+      FinanceiroAluno financeiroAluno = new FinanceiroAluno(
+         null,
+         aluno,
+         criarAlunoRequest.getDiscount(),
+         criarAlunoRequest.getDueDate(),
+              FinanceiroStatusEnum.EM_DIA
+      );
+
+      financeiroAlunoRepository.save(financeiroAluno);
   }
 
 }
