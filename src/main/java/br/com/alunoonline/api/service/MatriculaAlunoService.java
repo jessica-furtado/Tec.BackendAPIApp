@@ -1,6 +1,7 @@
 package br.com.alunoonline.api.service;
 
 import br.com.alunoonline.api.dtos.AtualizarNotasRequest;
+import br.com.alunoonline.api.dtos.HistoricoAlunoResponse;
 import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import br.com.alunoonline.api.model.MatriculaAluno;
 import br.com.alunoonline.api.repository.MatriculaAlunoRepository;
@@ -24,8 +25,13 @@ public class MatriculaAlunoService {
 
     public void updateGrades(Long matriculaAlunoId, AtualizarNotasRequest atualizarNotasRequest) {
         MatriculaAluno matriculaAluno = matriculaAlunoRepository.findById(matriculaAlunoId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada"));
+        updateStudentGrades(matriculaAluno, atualizarNotasRequest);
+        updateStudentStatus(matriculaAluno);
+
+        matriculaAlunoRepository.save(matriculaAluno);
     }
-    //Para atualizar as notas só é necessário o ID da matrícula e as notas 1 e nota 2 (DTO)
+    //Para atualizar as notas  é necessário o ID da matrícula e as notas 1 e nota 2 (DTO)
+    //Para variárias Optional é possível usar o orElseThrow - Se não for verdadeiro, lance uma exceção
 
     public void updateStudentGrades(MatriculaAluno matriculaAluno, AtualizarNotasRequest atualizarNotasRequest) {
         if (atualizarNotasRequest.getNota1() != null) {
@@ -33,7 +39,7 @@ public class MatriculaAlunoService {
         }
 
         if (atualizarNotasRequest.getNota2() != null) {
-            matriculaAluno.setNota2(matriculaAluno.getNota2());
+            matriculaAluno.setNota2(atualizarNotasRequest.getNota2());
         }
     }
     //Método de atualização da nota1 ou/e nota2, SE foram diferentes de nulo.
@@ -55,4 +61,25 @@ public class MatriculaAlunoService {
     //Método de atualização dos Status dos alunos que está no Enum
     //Métodos separados para cada ação deixam o código limpo. Single Responsability (S OLID).
 
+    public void updateStatusToBreak(Long matriculaAlunoId) {
+        MatriculaAluno matriculaAluno = matriculaAlunoRepository.findById(matriculaAlunoId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada"));
+        if (!MatriculaAlunoStatusEnum.MATRICULADO.equals(matriculaAluno.getStatus())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Só é possível trancar uma matrícula com o status Matriculado");
+        }
+        changeStatus(matriculaAluno, MatriculaAlunoStatusEnum.TRANCADO);
+    }
+
+    //1º Método que traz a condição para a não atualização do status para trancado (Negaçao de "Matriculado" = Status da matrícula do aluno
+    //2º Puxa o método criado abaxo que altera o status de matrícula aluno, setando o método em "TRANCADO"
+
+    public void changeStatus(MatriculaAluno matriculaAluno, MatriculaAlunoStatusEnum matriculaAlunoStatusEnum) {
+        matriculaAluno.setStatus(matriculaAlunoStatusEnum);
+        matriculaAlunoRepository.save(matriculaAluno);
+    }
+
+    //Método criado para alterar o Status da matrícula aluno
+
+    public HistoricoAlunoResponse getHistoricoFromAluno(Long alunoId) {
+
+    }
 }
