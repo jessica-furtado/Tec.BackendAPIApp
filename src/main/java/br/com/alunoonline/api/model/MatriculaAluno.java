@@ -18,16 +18,16 @@ public class MatriculaAluno implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long Id;
-    private Double nota1;
-    private Double nota2;
+    private Double grade1;
+    private Double grade2;
 
     @ManyToOne
-    @JoinColumn(name = "aluno_id")
-    private Aluno aluno;
+    @JoinColumn(name = "student_id")
+    private Aluno student;
 
     @ManyToOne
-    @JoinColumn(name = "disciplina_id")
-    private Disciplina disciplina;
+    @JoinColumn(name = "subject_id")
+    private Disciplina subject;
 
     @Enumerated(EnumType.STRING)  //Anotação que informa que o campo status será uma enumeração
     private MatriculaAlunoStatusEnum status;

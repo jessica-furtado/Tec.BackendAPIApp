@@ -1,6 +1,7 @@
 package br.com.alunoonline.api.service;
 
 import br.com.alunoonline.api.dtos.AtualizarNotasRequest;
+import br.com.alunoonline.api.dtos.DisciplinasAlunoResponse;
 import br.com.alunoonline.api.dtos.HistoricoAlunoResponse;
 import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import br.com.alunoonline.api.model.MatriculaAluno;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MatriculaAlunoService {
@@ -24,7 +28,7 @@ public class MatriculaAlunoService {
     }
 
     public void updateGrades(Long matriculaAlunoId, AtualizarNotasRequest atualizarNotasRequest) {
-        MatriculaAluno matriculaAluno = matriculaAlunoRepository.findById(matriculaAlunoId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada"));
+        MatriculaAluno matriculaAluno = matriculaAlunoRepository.findById(matriculaAlunoId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada"));
         updateStudentGrades(matriculaAluno, atualizarNotasRequest);
         updateStudentStatus(matriculaAluno);
 
@@ -34,22 +38,22 @@ public class MatriculaAlunoService {
     //Para variárias Optional é possível usar o orElseThrow - Se não for verdadeiro, lance uma exceção
 
     public void updateStudentGrades(MatriculaAluno matriculaAluno, AtualizarNotasRequest atualizarNotasRequest) {
-        if (atualizarNotasRequest.getNota1() != null) {
-            matriculaAluno.setNota1(atualizarNotasRequest.getNota1());
+        if (atualizarNotasRequest.getGrade1() != null) {
+            matriculaAluno.setGrade1(atualizarNotasRequest.getGrade1());
         }
 
-        if (atualizarNotasRequest.getNota2() != null) {
-            matriculaAluno.setNota2(atualizarNotasRequest.getNota2());
+        if (atualizarNotasRequest.getGrade2() != null) {
+            matriculaAluno.setGrade2(atualizarNotasRequest.getGrade2());
         }
     }
     //Método de atualização da nota1 ou/e nota2, SE foram diferentes de nulo.
 
     public void updateStudentStatus(MatriculaAluno matriculaAluno) {
-        Double nota1 = matriculaAluno.getNota1();
-        Double nota2 = matriculaAluno.getNota2();
+        Double nota1 = matriculaAluno.getGrade1();
+        Double nota2 = matriculaAluno.getGrade2();
 
         if (nota1 != null && nota2 != null) {
-            double average = (nota1 + nota2) /2;
+            double average = (nota1 + nota2) / 2;
             matriculaAluno.setStatus(average >= GRADE_AVG_TO_APPROVE ? MatriculaAlunoStatusEnum.APROVADO : MatriculaAlunoStatusEnum.REPROVADO);
         }
 
@@ -62,7 +66,7 @@ public class MatriculaAlunoService {
     //Métodos separados para cada ação deixam o código limpo. Single Responsability (S OLID).
 
     public void updateStatusToBreak(Long matriculaAlunoId) {
-        MatriculaAluno matriculaAluno = matriculaAlunoRepository.findById(matriculaAlunoId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada"));
+        MatriculaAluno matriculaAluno = matriculaAlunoRepository.findById(matriculaAlunoId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada"));
         if (!MatriculaAlunoStatusEnum.MATRICULADO.equals(matriculaAluno.getStatus())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Só é possível trancar uma matrícula com o status Matriculado");
         }
@@ -79,7 +83,41 @@ public class MatriculaAlunoService {
 
     //Método criado para alterar o Status da matrícula aluno
 
-    public HistoricoAlunoResponse getHistoricoFromAluno(Long alunoId) {
+    public HistoricoAlunoResponse getAcademicTranscript(Long alunoId) {
+        List<MatriculaAluno> matriculasDoAluno = matriculaAlunoRepository.findByStudentId(alunoId);
+
+        if (matriculasDoAluno.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse aluno não possui matrículas!");
+        }
+        HistoricoAlunoResponse historico = new HistoricoAlunoResponse();
+        historico.setStudentName(matriculasDoAluno.get(0).getStudent().getName());
+        historico.setStudentemail(matriculasDoAluno.get(0).getStudent().getEmail());
+
+        List<DisciplinasAlunoResponse> disciplinasList = new ArrayList<>();
+
+        for (MatriculaAluno matricula : matriculasDoAluno) {
+            DisciplinasAlunoResponse disciplinasAlunoResponse = new DisciplinasAlunoResponse();
+            disciplinasAlunoResponse.setSubjectName(matricula.getSubject().getName());
+            disciplinasAlunoResponse.setProfessorName(matricula.getSubject().getProfessor().getName());
+            disciplinasAlunoResponse.setGrade1(matricula.getGrade1());
+            disciplinasAlunoResponse.setGrade2(matricula.getGrade2());
+
+            if(matricula.getGrade1() != null && matricula.getGrade2() != null) {
+                disciplinasAlunoResponse.setAverage(((matricula.getGrade1())+matricula.getGrade2())/2.0);
+            }
+
+            else {
+                disciplinasAlunoResponse.setAverage(null);
+            }
+
+            disciplinasAlunoResponse.setStatus(matricula.getStatus());
+            disciplinasList.add(disciplinasAlunoResponse);
+        }
+
+        historico.setStudentSubjectsRespondeList(disciplinasList);
+
+        return historico;
 
     }
+
 }
