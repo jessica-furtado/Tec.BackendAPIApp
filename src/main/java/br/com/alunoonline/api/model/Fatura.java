@@ -19,7 +19,7 @@ public class Fatura implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "student_financial_id")
-    private FinanceiroAluno studentFinancial; //correção do atributo
+    private FinanceiroAluno studentFinancial;
 
     private LocalDateTime dueDate;
 
