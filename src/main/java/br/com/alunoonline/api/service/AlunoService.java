@@ -1,7 +1,12 @@
 package br.com.alunoonline.api.service;
 
+import br.com.alunoonline.api.dtos.CriarAlunoRequest;
+import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import br.com.alunoonline.api.model.Aluno;
+import br.com.alunoonline.api.model.Curso;
 import br.com.alunoonline.api.repository.AlunoRepository;
+import br.com.alunoonline.api.repository.CursoRepository;
+import br.com.alunoonline.api.repository.FinanceiroAlunoRepository;
 import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,9 +22,29 @@ public class AlunoService {
     @Autowired  //injenção de depedências do repository
     AlunoRepository alunoRepository;
 
-    public void create(Aluno aluno) {
-        alunoRepository.save(aluno);
+    @Autowired
+    FinanceiroAlunoRepository financeiroAlunoRepository;
+
+    @Autowired
+    CursoRepository cursoRepository;
+
+    public void create(CriarAlunoRequest criarAlunoRequest) {
+       Curso curso = cursoRepository.findById(criarAlunoRequest.getCourseId())
+               .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso não encontrado"));
+
+        Aluno savedStudent =  alunoRepository.save(
+               new Aluno(
+                       null,
+                       criarAlunoRequest.getName(),
+                       criarAlunoRequest.getEmail(),
+                       curso
+               )
+       );
     }  //prirmeiro método de criação
+
+    //Criar o item financeiro desse aluno salvo
+
+
 
     public List <Aluno> findAll() {
         return alunoRepository.findAll();

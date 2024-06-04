@@ -1,5 +1,6 @@
 package br.com.alunoonline.api.controller;
 
+import br.com.alunoonline.api.dtos.CriarAlunoRequest;
 import br.com.alunoonline.api.model.Aluno;
 import br.com.alunoonline.api.service.AlunoService;
 import jakarta.persistence.Id;
@@ -19,8 +20,8 @@ public class AlunoController {
 
     @PostMapping  //Anotação para informar da criação do objeto verbos HTTP
     @ResponseStatus(HttpStatus.CREATED) //Anotação da resposta da requisição
-    public void create(@RequestBody Aluno aluno) {
-        alunoService.create(aluno);
+    public void create(@RequestBody CriarAlunoRequest criarAlunoRequest) {
+        alunoService.create(criarAlunoRequest);
     }  //Conversão do Jason em um objeto já modelado em Java
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
